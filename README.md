@@ -11,7 +11,10 @@
 <p align="center">
   <a href="https://npmjs.org/package/banco-chain-sdk"><img alt="NPM version" src="https://img.shields.io/npm/v/banco-chain-sdk.svg?style=flat" /></a>
   <a href="https://github.com/RABC-Group/banco-chain-sdk-nodejs/actions/workflows/node.yml"><img alt="Node.js CI" src="https://github.com/RABC-Group/banco-chain-sdk-nodejs/actions/workflows/node.yml/badge.svg" /></a>
-  <a href="https://coveralls.io/github/github/RABC-Group/banco-chain-sdk-nodejs?branch=master"><img alt="Coverage Status" src="https://coveralls.io/repos/github/RABC-Group/banco-chain-sdk-nodejs/badge.svg?branch=master" /></a>
+  <a href="https://codecov.io/gh/RABC-Group/banco-chain-sdk-nodejs">
+    <img src="https://codecov.io/gh/RABC-Group/banco-chain-sdk-nodejs/branch/main/graph/badge.svg?token=YK8LBR476D"/>
+  </a>
+  <a href="https://snyk.io/test/github/RABC-Group/banco-chain-sdk-nodejs"><img src="https://snyk.io/test/github/RABC-Group/banco-chain-sdk-nodejs/badge.svg"></a>
 </p>
 
 ## Requirements
