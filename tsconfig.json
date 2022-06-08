@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "sourceMap": true,
+    "experimentalDecorators": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "declaration": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true
+  },
+  "include": ["lib/**/*", "typings/**/*"],
+  "exclude": ["node_modules"]
+}
