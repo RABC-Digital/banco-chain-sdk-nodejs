@@ -14,6 +14,12 @@
   <a href="https://coveralls.io/github/github/RABC-Group/banco-chain-sdk-nodejs?branch=master"><img alt="Coverage Status" src="https://coveralls.io/repos/github/RABC-Group/banco-chain-sdk-nodejs/badge.svg?branch=master" /></a>
 </p>
 
+## Requirements
+*   Node.js 12
+
+## Compatibility
+*   Node.js 12+
+
 ## Installation
 
 The preferred way to install the Banco Chain SDK for Node.js is to use the npm package manager for Node.js. Simply type the following into a terminal window:
