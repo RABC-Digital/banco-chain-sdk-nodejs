@@ -111,21 +111,32 @@ class BancoChainSdk {
         dataType: 'json',
       }).then((ret: { status: number, data: any }) => {
 
-        infoLog && infoLog('[BancoChainSdk]apply token request: %s', data);
+        infoLog && infoLog('[BancoChainSdk]Apply token request: %s', data);
 
         // Success
         if (ret.status === 200) {
-          if (ret.data.success) {
-            // TODO: 数据验签
-            return resolve(ret.data);
+          if (ret.data && Object.prototype.toString.call(ret.data).toLowerCase() === '[object object]') {
+
+            if (ret.data.success) {
+              // TODO: 数据验签
+              return resolve(ret.data);
+            }
+
+            return reject(ret.data);
           }
-          reject(ret.data);
+          return reject({
+            errorCode: '400',
+            errorMessage: '[BancoChainSdk]Response format error',
+          });
         }
 
-        reject({ serverResult: ret, errorMessage: '[BancoChainSdk]HTTP request error' });
+        reject({
+          errorCode: ret.status.toString(),
+          errorMessage: '[BancoChainSdk]HTTP request error',
+        });
       })
       .catch((err) => {
-        err.message = '[BancoChainSdk]apply token error';
+        err.message = '[BancoChainSdk]Apply token error';
         errorLog && errorLog(err);
         reject(err);
       });

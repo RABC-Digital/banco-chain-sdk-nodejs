@@ -1,6 +1,7 @@
 'use strict';
 
 require('should');
+
 const fs = require('fs');
 const sinon = require('sinon');
 const urllib = require('urllib');
@@ -125,10 +126,67 @@ describe('sdk', function() {
       });
 
       sdk.token().catch((err) => {
-        (err.toString().indexOf('[BancoChainSdk]apply token error') > -1).should.eql(true);
+        (err.toString().indexOf('[BancoChainSdk]Apply token error') > -1).should.eql(true);
         done();
       });
     });
-    
+
+    it('status not 200', function (done) {
+      sandbox.stub(urllib, 'request').callsFake(() => {
+        return Promise.resolve({ status: 503 })
+      });
+
+      sdk.token().catch((err) =>{
+        err.should.eql({
+          errorCode: "503",
+          errorMessage: '[BancoChainSdk]HTTP request error'
+        });
+        done();
+      })
+    });
+
+    it('authorize error', function(done) {
+      sandbox.stub(urllib, 'request').callsFake(() => {
+        return Promise.resolve({
+          status: 200,
+          data: {
+            success: false,
+            data: null,
+            errorCode: "401",
+            errorMessage: 'Unauthorized',
+            showType: 2,
+          },
+        });
+      });
+
+      sdk.token().catch((err) => {
+        err.should.eql({
+          success: false,
+          data: null,
+          errorCode: "401",
+          errorMessage: 'Unauthorized',
+          showType: 2,
+        });
+        done();
+      })
+    });
+
+    it('response error', function (done) {
+      const response = {
+        status: 200,
+        data: undefined,
+      };
+      sandbox.stub(urllib, 'request').callsFake(() => {
+        return Promise.resolve(response);
+      });
+
+      sdk.token().catch(function(err){
+        err.should.eql({
+          errorCode: "400",
+          errorMessage: '[BancoChainSdk]Response format error'
+        });
+        done();
+      })
+    });
   })
 })
