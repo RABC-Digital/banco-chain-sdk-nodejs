@@ -26,6 +26,10 @@ export interface BancoChainSdkCommonResult {
   data: any;
 }
 
+export interface IRequestParams {
+  [key: string]: any;
+}
+
 export interface IRequestOption {
   log?: {
     info(...args: any[]): any;
@@ -78,7 +82,7 @@ class BancoChainSdk {
     return `-----BEGIN ${type}-----\n${item.join('')}\n-----END ${type}-----`;
   }
 
-  public token(option: IRequestOption = {}) {
+  public token(option: IRequestOption = {}): Promise<BancoChainSdkCommonResult> {
     const config = this.config;
 
     const assertion = jwt.sign({
@@ -103,13 +107,13 @@ class BancoChainSdk {
     };
 
     return new Promise((resolve, reject) => {
-      config.urllib.request(url, {
+      config.urllib.request<BancoChainSdkCommonResult>(url, {
         data,
         method: 'POST',
         timeout: config.timeout,
         headers: { 'user-agent': this.sdkVersion },
         dataType: 'json',
-      }).then((ret: { status: number, data: any }) => {
+      }).then((ret) => {
 
         infoLog && infoLog('[BancoChainSdk]Apply token request: %s', data);
 
@@ -143,6 +147,67 @@ class BancoChainSdk {
     });
   }
 
+  public exec(
+    accesstoken: string,
+    method: urllib.HttpMethod,
+    resource: string,
+    params: IRequestParams = {},
+    option: IRequestOption = {},
+  ) {
+    if (!accesstoken) {
+      throw Error('Access Token is required');
+    }
+
+    const config = this.config;
+    const url = `${config.gateway}/${config.version}/${resource}`;
+
+    const infoLog = (option.log && is.fn(option.log.info)) ? option.log.info : null;
+    const errorLog = (option.log && is.fn(option.log.error)) ? option.log.error : null;
+
+    return new Promise((resolve, reject) => {
+      config.urllib.request<BancoChainSdkCommonResult>(url, {
+        method,
+        data: params,
+        timeout: config.timeout,
+        headers: {
+          authorization: `Bearer ${accesstoken}`,
+          'app-id': config.appId,
+          'user-agent': this.sdkVersion,
+        },
+        dataType: 'json',
+      }).then((ret: { status: number, data: any }) => {
+
+        infoLog && infoLog('[BancoChainSdk]Exec request: %s', params);
+
+        // Success
+        if (ret.status === 200) {
+          if (ret.data && Object.prototype.toString.call(ret.data).toLowerCase() === '[object object]') {
+
+            if (ret.data.success) {
+              // TODO: 数据验签
+              return resolve(ret.data);
+            }
+
+            return reject(ret.data);
+          }
+          return reject({
+            errorCode: '400',
+            errorMessage: '[BancoChainSdk]Response format error',
+          });
+        }
+
+        reject({
+          errorCode: ret.status.toString(),
+          errorMessage: '[BancoChainSdk]HTTP request error',
+        });
+      })
+      .catch((err) => {
+        err.message = '[BancoChainSdk]Exec error';
+        errorLog && errorLog(err);
+        reject(err);
+      });
+    });
+  }
 }
 
 export default BancoChainSdk;

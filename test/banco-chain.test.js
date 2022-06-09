@@ -118,6 +118,7 @@ describe('sdk', function() {
     beforeEach(function() {
       sdk = new BancoChainSdk(sdkBaseConfig)
     });
+
     it('request error.', (done) => {
       sandbox.stub(urllib, 'request').callsFake(() => {
         return new Promise(function() {
@@ -181,6 +182,114 @@ describe('sdk', function() {
       });
 
       sdk.token().catch(function(err){
+        err.should.eql({
+          errorCode: "400",
+          errorMessage: '[BancoChainSdk]Response format error'
+        });
+        done();
+      })
+    });
+  })
+
+  describe('exec', function() {
+    let sdk;
+    const sdkBaseConfig = {
+      appId: APP_ID,
+      clientId: CLIENT_ID,
+      clientSecret: CLIENT_SECRET,
+      privateKey: PRIVATE_KEY,
+      gateway: GATE_WAY,
+      timeout: 30000,
+    };
+
+    const accesstoken = 'abcdefghijklmnopqrstuvwxyz';
+
+    beforeEach(function() {
+      sdk = new BancoChainSdk(sdkBaseConfig)
+    });
+
+
+    it('accesstoken is null', () => {
+      try {
+        sdk.exec(null, 'GET', 'program/vendor', {
+          no: 'TEST0006',
+        })
+      } catch (e) {
+        (e.toString().indexOf('Access Token is required') > -1).should.eql(true)
+      }
+    });
+
+    it('request error.', (done) => {
+      sandbox.stub(urllib, 'request').callsFake(() => {
+        return new Promise(function() {
+          throw Error('custom error.');
+        });
+      });
+
+      sdk.exec(accesstoken, 'GET', 'program/vendor', {
+        no: 'TEST0006',
+      }).catch((err) => {
+        (err.toString().indexOf('[BancoChainSdk]Exec error') > -1).should.eql(true);
+        done();
+      });
+    });
+
+    it('status not 200', function (done) {
+      sandbox.stub(urllib, 'request').callsFake(() => {
+        return Promise.resolve({ status: 503 })
+      });
+
+      sdk.exec(accesstoken, 'GET', 'program/vendor', {
+        no: 'TEST0006',
+      }).catch((err) =>{
+        err.should.eql({
+          errorCode: "503",
+          errorMessage: '[BancoChainSdk]HTTP request error'
+        });
+        done();
+      })
+    });
+
+    it('authorize error', function(done) {
+      sandbox.stub(urllib, 'request').callsFake(() => {
+        return Promise.resolve({
+          status: 200,
+          data: {
+            success: false,
+            data: null,
+            errorCode: "401",
+            errorMessage: 'Unauthorized',
+            showType: 2,
+          },
+        });
+      });
+
+      sdk.exec(accesstoken, 'GET', 'program/vendor', {
+        no: 'TEST0006',
+      }).catch((err) => {
+        err.should.eql({
+          success: false,
+          data: null,
+          errorCode: "401",
+          errorMessage: 'Unauthorized',
+          showType: 2,
+        });
+        done();
+      })
+    });
+
+    it('response error', function (done) {
+      const response = {
+        status: 200,
+        data: undefined,
+      };
+      sandbox.stub(urllib, 'request').callsFake(() => {
+        return Promise.resolve(response);
+      });
+
+      sdk.exec(accesstoken, 'GET', 'program/vendor', {
+        no: 'TEST0006',
+      }).catch(function(err){
         err.should.eql({
           errorCode: "400",
           errorMessage: '[BancoChainSdk]Response format error'
