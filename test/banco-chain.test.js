@@ -189,7 +189,34 @@ describe('sdk', function() {
         done();
       })
     });
-  })
+
+    it('response success', function (done) {
+      const response = {
+        status: 200,
+        data: {
+          success: true,
+          data: null,
+          errorCode: "0",
+          errorMessage: null,
+          showType: 1,
+        },
+      };
+      sandbox.stub(urllib, 'request').callsFake(() => {
+        return Promise.resolve(response);
+      });
+  
+      sdk.token().then(function(res) {
+        res.should.eql( {
+          success: true,
+          data: null,
+          errorCode: "0",
+          errorMessage: null,
+          showType: 1,
+        });
+        done();
+      });
+    });
+  });
 
   describe('exec', function() {
     let sdk;
@@ -296,6 +323,35 @@ describe('sdk', function() {
         });
         done();
       })
+    });
+
+    it('response success', function (done) {
+      const response = {
+        status: 200,
+        data: {
+          success: true,
+          data: null,
+          errorCode: "0",
+          errorMessage: null,
+          showType: 1,
+        },
+      };
+      sandbox.stub(urllib, 'request').callsFake(() => {
+        return Promise.resolve(response);
+      });
+  
+      sdk.exec(accesstoken, 'GET', 'program/vendor', {
+        no: 'TEST0006',
+      }).then(function(res) {
+        res.should.eql( {
+          success: true,
+          data: null,
+          errorCode: "0",
+          errorMessage: null,
+          showType: 1,
+        });
+        done();
+      });
     });
   })
 

@@ -6,7 +6,7 @@ import { BancoChainSdkConfig } from './banco-chain';
 export const sign = (params: any = {}, config: BancoChainSdkConfig) => {
   const signParams = Object.assign({
     clientId: config.clientId,
-    timestamp: moment().valueOf(),
+    timestamp: moment().valueOf().toString(),
   }, params);
 
   const signStr = Object.keys(signParams).sort().map((key) => {
@@ -18,7 +18,7 @@ export const sign = (params: any = {}, config: BancoChainSdkConfig) => {
   }).join('&');
 
   // Calculate the signature
-  const sign = crypto.createSign('RSA-SHA256')
+  const sign = crypto.createSign('RSA-SHA512')
                 .update(signStr, 'utf8').sign(config.privateKey, 'base64');
   return Object.assign(signParams, { sign });
 };
