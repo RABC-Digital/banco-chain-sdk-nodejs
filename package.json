@@ -1,6 +1,6 @@
 {
   "name": "banco-chain-sdk",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Banco Chain SDK for Node.js",
   "main": "lib/banco-chain.js",
   "scripts": {
@@ -67,8 +67,10 @@
   },
   "dependencies": {
     "camelcase-keys": "^4.2.0",
+    "iconv-lite": "^0.6.3",
     "is": "^3.3.0",
     "jsonwebtoken": "^8.5.1",
+    "moment": "^2.29.3",
     "urllib": "^2.38.0"
   }
 }

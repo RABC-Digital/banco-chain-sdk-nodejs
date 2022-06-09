@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import * as urllib from 'urllib';
 
 import pkg from '../package.json';
+import { sign } from './util';
 
 export interface BancoChainSdkConfig {
   appId: string;
@@ -16,6 +17,7 @@ export interface BancoChainSdkConfig {
   timeout?: number;
   version?: 'v1';
   urllib?: typeof urllib;
+  charset?: 'utf-8';
 }
 
 export interface BancoChainSdkCommonResult {
@@ -63,6 +65,7 @@ class BancoChainSdk {
       gateway: 'https://openapi.bancochain.com/api',
       timeout: 5000,
       version: 'v1',
+      charset: 'utf-8',
     }, camelcaseKeys(config, { deep: true }));
 
     this.sdkVersion = `banco-chain-sdk-nodejs-${pkg.version}`;
@@ -207,6 +210,10 @@ class BancoChainSdk {
         reject(err);
       });
     });
+  }
+
+  public signOpenRequest(params: any) {
+    return sign(params, this.config);
   }
 }
 

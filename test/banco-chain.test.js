@@ -298,4 +298,29 @@ describe('sdk', function() {
       })
     });
   })
+
+  describe('signOpenRequest', function() {
+    let sdk;
+    const sdkBaseConfig = {
+      appId: APP_ID,
+      clientId: CLIENT_ID,
+      clientSecret: CLIENT_SECRET,
+      privateKey: PRIVATE_KEY,
+      gateway: GATE_WAY,
+      timeout: 30000,
+    };
+
+    beforeEach(function() {
+      sdk = new BancoChainSdk(sdkBaseConfig)
+    });
+
+    it('sign', function() {
+      const data = sdk.signOpenRequest({
+        no: 'TEST0006',
+      });
+      data.no.should.eql('TEST0006');
+      data.clientId.should.eql(CLIENT_ID);
+      (data.sign !== '').should.eql(true);
+    })
+  })
 })
