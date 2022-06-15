@@ -178,6 +178,7 @@ class BancoChainSdk {
           'user-agent': this.sdkVersion,
         },
         dataType: 'json',
+        contentType: 'json',
       }).then((ret: { status: number, data: any }) => {
 
         infoLog && infoLog('[BancoChainSdk]Exec request: %s', params);

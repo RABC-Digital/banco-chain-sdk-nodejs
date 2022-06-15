@@ -1,6 +1,6 @@
 {
   "name": "banco-chain-sdk",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Banco Chain SDK for Node.js",
   "main": "lib/banco-chain.js",
   "scripts": {
@@ -25,8 +25,11 @@
     "rabc group",
     "sdk"
   ],
-  "author": "RABC Group <it@rabc.sg>",
-  "license": "ISC",
+  "author": {
+    "name": "RABC Group",
+    "url": "https://rabc.sg/"
+  },
+  "license": "Apache-2.0",
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
   },
